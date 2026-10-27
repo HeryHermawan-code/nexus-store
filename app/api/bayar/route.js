@@ -1,4 +1,6 @@
-export async function POST(req){
+git add -A
+git commit -m "update WA to ENV"
+git pushexport async function POST(req){
   const body=await req.json().catch(()=>({}))
   const product=body.product||"NEXUS"
   const price=body.price||100000
