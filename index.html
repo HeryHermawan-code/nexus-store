@@ -1,210 +1,107 @@
 <!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NEXUS PREMIUM AUTO DELIVERY</title>
-<style>
-body{font-family:system-ui;background:#0b0f19;color:#e2e8f0;margin:0;padding:12px}
-.container{max-width:720px;margin:auto}
-.card{background:#1e293b;border:1px solid #334155;padding:18px;border-radius:14px;margin-bottom:14px}
-.header{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center}
-h1{font-size:20px;margin:0}
-select{background:#0f172a;color:#fff;border:1px solid #334155;padding:7px 10px;border-radius:8px}
-.product{display:flex;justify-content:space-between;gap:10px;padding:16px 0;border-bottom:1px solid #334155;align-items:center}
-.product:last-child{border:none}
-.price{color:#38bdf8;font-weight:800;font-family:monospace}
-.sub{color:#94a3b8;font-size:11px}
-button{background:#0284c7;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-weight:bold;cursor:pointer}
-button:hover{background:#0369a1}
-.badge{background:#22c55e;color:#052e16;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:bold}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:99;padding:16px}
-.modal-box{background:#1e293b;border:1px solid #475569;border-radius:16px;max-width:520px;width:100%;padding:20px}
-.progress{height:6px;background:#334155;border-radius:99px;overflow:hidden;margin:12px 0}
-.bar{height:100%;width:0%;background:#38bdf8;transition:width .3s}
-.code-box{background:#0f172a;border:1px dashed #38bdf8;padding:12px;border-radius:10px;font-family:monospace;font-size:13px;margin:10px 0;word-break:break-all}
-</style>
-</head>
-<body>
-<div class="container">
-<div class="header">
-<h1 id="t1">NEXUS AUTO DELIVERY 100%</h1>
-<div>
-<select id="lang" onchange="setLang(this.value)"><option value="id">🇮🇩 ID</option><option value="en">🇺🇸 EN</option><option value="zh">🇨🇳 中文</option><option value="ar">🇸🇦 AR</option><option value="jp">🇯🇵 JP</option></select>
-<select id="curr" onchange="render()"><option value="IDR">IDR</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="SGD">SGD</option><option value="JPY">JPY</option></select>
-</div>
-</div>
-
-<div class="card">
-<b>BRI 015901054376505 An HERY HERMAWAN</b><br><span class="badge">AUTO DELIVERY</span> <span class="badge">1 JUTA+ PREMIUM</span> <span class="badge">MULTI BAHASA + AUTO IDR</span>
-<p id="rate" style="font-size:11px;color:#64748b">Kurs: 1 USD ≈ Rp 16.500 | Auto Convert Aktif</p>
-<button onclick="showOrders()" style="background:#334155">📦 My Orders / Pesanan Saya (<span id="oc">0</span>)</button>
-</div>
-
-<div class="card"><h2 id="catTitle">Katalog Premium Auto Delivery</h2><div id="catalog"></div></div>
-</div>
-
-<div class="modal" id="modal">
-<div class="modal-box">
-<h2 id="mTitle">Processing...</h2>
-<div id="step1">
-<p id="mDesc">Konfirmasi pembayaran ke BRI 015901054376505</p>
-<div id="detail"></div>
-<button id="btnPay" onclick="process()">BAYAR & AUTO DELIVERY SEKARANG</button>
-<button onclick="closeM()" style="background:#475569;margin-left:8px">Batal</button>
-</div>
-<div id="step2" style="display:none">
-<p>⚡ Memverifikasi & Menyiapkan Produk...</p>
-<div class="progress"><div class="bar" id="bar"></div></div>
-<p id="pText" style="font-size:12px;color:#94a3b8">Menghubungkan ke vault...</p>
-</div>
-<div id="step3" style="display:none">
-<h3 style="color:#22c55e">✅ TERKIRIM! AUTO DELIVERY BERHASIL</h3>
-<div id="deliverBox"></div>
-<button onclick="downloadFile()">⬇️ Download Lisensi + File</button>
-<button onclick="closeM()" style="background:#22c55e;margin-left:8px">Selesai</button>
-</div>
-</div>
-</div>
-
-<script>
-const R={IDR:1,USD:16500,EUR:18000,SGD:12200,JPY:108}
-const T={
-id:{cat:"Katalog Premium Auto Delivery (1 Juta+)",buy:"Beli & Auto Kirim",pay:"BAYAR & AUTO DELIVERY SEKARANG",rate:"Kurs: 1 USD ≈ Rp 16.500 | Auto Convert Aktif"},
-en:{cat:"Premium Auto Delivery Catalog (1M+)",buy:"Buy & Auto Deliver",pay:"PAY & AUTO DELIVER NOW",rate:"Rate: 1 USD ≈ Rp 16,500 | Auto IDR Active"},
-zh:{cat:"高级自动交付目录",buy:"购买并自动交付",pay:"支付并自动交付",rate:"汇率: 1美元 ≈ 16,500印尼盾"},
-ar:{cat:"كتالوج التسليم التلقائي المميز",buy:"شراء وتسليم تلقائي",pay:"ادفع واستلم تلقائيا",rate:"السعر: 1 دولار ≈ 16,500 روبية"},
-jp:{cat:"プレミアム自動配信カタログ",buy:"購入＆自動配信",pay:"支払い＆自動配信",rate:"レート: 1 USD ≈ Rp 16,500"}
-}
-const PRODUCTS=[
-{id:"V30",name:"V30 ULTRA ENTERPRISE",price:1500000,file:"V30 Enterprise Source + License + Deploy Guide"},
-{id:"V21",name:"V21 QUANTUM SHIELD PRO",price:4999000,file:"V21 Quantum Shield Config + Private Key + WAF Rules"},
-{id:"V40",name:"V40 TITAN CORE",price:7500000,file:"V40 Titan Core - 1M TPS Engine + API Docs"},
-{id:"VP",name:"NEXUS 9999 A2Z Z2A ULTIMATE",price:12500000,file:"9999 Ultimate Package - Full Store + Vault + Auto Delivery System"},
-{id:"VX",name:"NEXUS X PRIVATE VAULT",price:25000000,file:"NEXUS X - Private BRI Vault System + QRIS + Dashboard"}
-]
-let LANG="id", CURRENT=null, LAST_DELIVERY=null
-function setLang(l){LANG=l;document.getElementById('catTitle').innerText=T[l].cat;document.getElementById('rate').innerText=T[l].rate;document.getElementById('btnPay').innerText=T[l].pay;render()}
-function fmt(idr){let c=document.getElementById('curr').value;let r=R[c];if(c==="IDR")return `<div class=price>Rp ${idr.toLocaleString('id-ID')}</div><div class=sub>≈ $${(idr/16500).toFixed(2)} USD</div>`;let v=idr/r;let d=c==="JPY"?`¥${Math.round(v).toLocaleString()}`:`${c} ${v.toFixed(2)}`;return `<div class=price>${d}</div><div class=sub>≈ Rp ${idr.toLocaleString('id-ID')} IDR</div>`}
-function render(){let h="";PRODUCTS.forEach(p=>{h+=`<div class=product><div style=flex:1><b>${p.name}</b><br><span class=sub>${p.file}</span><br>${fmt(p.price)}</div><button onclick="checkout('${p.id}')">${T[LANG].buy}</button></div>`});document.getElementById('catalog').innerHTML=h;updateOrderCount()}
-function checkout(id){CURRENT=PRODUCTS.find(x=>x.id===id);document.getElementById('detail').innerHTML=`<div class=code-box><b>${CURRENT.name}</b><br>${fmt(CURRENT.price)}<br><br>Bank: BRI 015901054376505 An HERY HERMAWAN<br>Metode: Auto Delivery Instant</div>`;document.getElementById('modal').style.display='flex';document.getElementById('step1').style.display='block';document.getElementById('step2').style.display='none';document.getElementById('step3').style.display='none';document.getElementById('mTitle').innerText=CURRENT.name}
-function process(){document.getElementById('step1').style.display='none';document.getElementById('step2').style.display='flex';document.getElementById('step2').style.flexDirection='column';let b=document.getElementById('bar'),t=document.getElementById('pText'),w=0;let msgs=["Menghubungkan ke vault BRI...","Verifikasi BRI 015901054376505...","Generate License Key...","Menyiapkan file...","Encrypt delivery..."];let iv=setInterval(()=>{w+=20;b.style.width=w+"%";t.innerText=msgs[w/20-1]||"Selesai";if(w>=100){clearInterval(iv);deliver()}},500)}
-function genKey(){let s="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";let k="NEXUS-";for(let i=0;i<16;i++){k+=s[Math.floor(Math.random()*s.length)];if((i+1)%4==0&&i!=15)k+="-"}return k}
-function deliver(){let orderId="NXS-"+Date.now().toString().slice(-8);let license=genKey();let now=new Date().toLocaleString('id-ID');LAST_DELIVERY=`===
-set +H; cd; rm -rf nexus-store; git -c http.sslVerify=false clone https://github.com/HeryHermawan-code/nexus-store.git; cd nexus-store; rm -rf vercel.json public .vercel
-cat > index.html <<'HTML'
-<!DOCTYPE html>
 <html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NEXUS PREMIUM AUTO DELIVERY 100%</title>
+<title>NEXUS MEGA AUTO DELIVERY - 12 Products</title>
 <style>
 body{font-family:system-ui;background:#0b0f19;color:#e2e8f0;margin:0;padding:12px}
-.container{max-width:720px;margin:auto}
-.card{background:#1e293b;border:1px solid #334155;padding:18px;border-radius:12px;margin-bottom:14px}
+.container{max-width:760px;margin:auto}
+.card{background:#1e293b;border:1px solid #334155;padding:16px;border-radius:12px;margin-bottom:12px}
 .header{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center}
-h1{font-size:18px;margin:0}
-.vault{background:#0f172a;border-left:4px solid #38bdf8;padding:10px;font-family:monospace;font-size:13px}
-.product{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 0;border-bottom:1px solid #334155}
-.price-main{color:#38bdf8;font-weight:800;font-family:monospace}
-.price-sub{color:#94a3b8;font-size:11px}
-button{background:#0284c7;color:#fff;border:none;padding:10px 16px;border-radius:8px;font-weight:bold;cursor:pointer}
-.badge{background:#22c55e;color:#052e16;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:bold}
+h1{font-size:19px;margin:0}
+.vault{background:#0f172a;border-left:4px solid #38bdf8;padding:10px;font-family:monospace;font-size:12px}
+.product{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 0;border-bottom:1px solid #2a374f}
+.price-main{color:#38bdf8;font-weight:800;font-family:monospace;font-size:15px}
+.price-sub{color:#94a3b8;font-size:10px}
+button{background:#0284c7;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-weight:bold;cursor:pointer;white-space:nowrap}
+.badge{background:#22c55e;color:#052e16;padding:2px 7px;border-radius:999px;font-size:9px;font-weight:bold;margin-right:3px}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:99;padding:16px}
-.modal-box{background:#1e293b;border:1px solid #475569;border-radius:12px;padding:20px;width:100%;max-width:480px}
-.progress{height:8px;background:#334155;border-radius:99px;overflow:hidden;margin:12px 0}
-.bar{height:100%;width:0;background:#38bdf8;transition:width 2s}
-.code-box{background:#020617;border:1px dashed #38bdf8;padding:10px;border-radius:10px;font-family:monospace;font-size:13px;margin:10px 0;word-break:break-all}
+.modal-box{background:#1e293b;border:1px solid #475569;border-radius:12px;padding:18px;width:100%;max-width:500px}
+.bar{height:8px;background:#334155;border-radius:99px;overflow:hidden;margin:10px 0}
+#bar{height:100%;width:0;background:#38bdf8;transition:width 2s}
+.code-box{background:#020617;border:1px dashed #38bdf8;padding:10px;border-radius:10px;font-family:monospace;font-size:12px;margin:8px 0;word-break:break-all}
+.cat{font-size:10px;color:#facc15;border:1px solid #facc15;padding:1px 6px;border-radius:99px}
 </style>
 </head><body>
 <div class="container">
-<div class="header">
-<h1 id="t1">NEXUS AUTO DELIVERY 100%</h1>
-<div>
-<select id="lang" onchange="setLang(this.value)"><option value="id">🇮🇩 ID</option><option value="en">🇺🇸 EN</option><option value="zh">🇨🇳 中文</option><option value="ar">🇸🇦 AR</option><option value="jp">🇯🇵 JP</option></select>
-<select id="curr" onchange="render()"><option value="IDR">IDR</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="SGD">SGD</option><option value="JPY">JPY</option></select>
-</div>
+<div class="header"><h1 id="t1">NEXUS MEGA AUTO DELIVERY 100%</h1>
+<div><select id="lang" onchange="setLang(this.value)"><option value="id">🇮🇩 ID</option><option value="en">🇺🇸 EN</option><option value="zh">🇨🇳 中文</option><option value="ar">🇸🇦 AR</option><option value="jp">🇯🇵 JP</option></select>
+<select id="curr" onchange="render()"><option value="IDR">IDR</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="SGD">SGD</option><option value="JPY">JPY</option></select></div>
 </div>
 
-<div class="card">
-<div class="vault">BRI 015901054376505 An HERY HERMAWAN<br><span class="badge">AUTO DELIVERY</span> <span class="badge">1 JUTA+ PREMIUM</span> <span class="badge">MULTI BAHASA</span><br><span id="rate">Kurs: 1 USD = Rp 16.500 | Auto Convert Aktif</span></div>
-<button onclick="showOrders()" style="background:#475569;margin-top:10px;width:100%" id="myOrderBtn">📦 My Orders / Pesanan Saya</button>
+<div class="card"><div class="vault">BRI 015901054376505 An HERY HERMAWAN<br><span class="badge">12 PRODUK</span><span class="badge">1JT-100JT</span><span class="badge">AUTO DELIVERY</span><span class="badge">AUTO IDR</span><br><span id="rate">Kurs: 1 USD = Rp 16.500 | Multi Bahasa Aktif</span></div>
+<button onclick="showOrders()" style="background:#475569;margin-top:10px;width:100%" id="orderBtn">📦 My Orders (0)</button>
+<input id="search" placeholder="Cari produk... / Search product..." oninput="render()" style="width:100%;margin-top:10px;background:#0f172a;border:1px solid #334155;color:#e2e8f0;padding:10px;border-radius:8px">
 </div>
 
-<div class="card"><h2 id="t2">Katalog Premium Auto Delivery</h2><div id="catalog"></div></div>
+<div class="card"><h2 id="t2" style="margin:0 0 8px 0">Katalog Premium (12 Produk Variasi Harga)</h2><div id="catalog">Loading...</div></div>
 </div>
 
-<div class="modal" id="modal">
-<div class="modal-box">
-<div id="step1"><h2 id="tDetail">Detail Pesanan</h2><div id="detail"></div><p id="tVault" style="font-size:12px;color:#94a3b8">Konfirmasi pembayaran ke BRI 015901054376505</p><button id="bPay" onclick="process()" style="width:100%">BAYAR & AUTO DELIVERY SEKARANG</button><button onclick="closeM()" style="background:#475569;margin-top:8px;width:100%">Batal</button></div>
-<div id="step2" style="display:none"><h3>⚡ Processing Auto Delivery...</h3><div class="progress"><div class="bar" id="bar"></div></div><p id="txt2" style="font-size:12px;color:#94a3b8">Menghubungkan ke vault...</p></div>
-<div id="step3" style="display:none"><h3 style="color:#22c55e">✅ TERKIRIM! AUTO DELIVERY BERHASIL!</h3><div id="delivery"></div><button onclick="download()" style="width:100%">📥 Download Lisensi + File</button><button onclick="closeM()" style="background:#22c55e;width:100%;margin-top:8px">Selesai</button></div>
-</div>
-</div>
+<div class="modal" id="modal"><div class="modal-box">
+<div id="step1"><h3 id="tDet">Detail Pesanan</h3><div id="detail"></div><button id="bPay" onclick="process()" style="width:100%">BAYAR & AUTO DELIVERY SEKARANG</button><button onclick="closeM()" style="background:#475569;margin-top:8px;width:100%">Batal</button></div>
+<div id="step2" style="display:none"><h3>⚡ Processing...</h3><div class="bar"><div id="bar"></div></div><p id="txt2" style="font-size:12px;color:#94a3b8">Verifikasi vault...</p></div>
+<div id="step3" style="display:none"><h3 style="color:#22c55e">✅ TERKIRIM!</h3><div id="delivery"></div><button onclick="download()" style="width:100%">📥 Download File + License</button><button onclick="closeM()" style="background:#22c55e;width:100%;margin-top:8px">Selesai</button></div>
+</div></div>
 
 <script>
 const RATES={IDR:1,USD:16500,EUR:18000,SGD:12200,JPY:108};
 const T={
-id:{t1:"NEXUS AUTO DELIVERY 100%",t2:"Katalog Premium Auto Delivery (1 Juta+)",buy:"Beli & Auto Kirim",pay:"BAYAR & AUTO DELIVERY SEKARANG",rate:"Kurs: 1 USD = Rp 16.500 | Auto Convert Aktif"},
-en:{t1:"NEXUS AUTO DELIVERY 100%",t2:"Premium Auto Delivery Catalog (1M+)",buy:"Buy & Auto Deliver",pay:"PAY & AUTO DELIVERY NOW",rate:"Rate: 1 USD = Rp 16,500 | Auto IDR Convert"},
-zh:{t1:"NEXUS 自动交付 100%",t2:"高级自动交付目录",buy:"购买并自动交付",pay:"付款并立即交付",rate:"汇率: 1 USD = Rp 16,500"},
-ar:{t1:"نيكسوس توصيل تلقائي 100%",t2:"كتالوج مميز توصيل تلقائي",buy:"شراء وتوصيل تلقائي",pay:"ادفع وتسليم تلقائي الآن",rate:"السعر: 1 USD = Rp 16,500"},
-jp:{t1:"NEXUS 自動配信 100%",t2:"プレミアム自動配信カタログ",buy:"購入＆自動配信",pay:"支払い＆自動配信",rate:"レート: 1 USD = Rp 16,500"}
+id:{t1:"NEXUS MEGA AUTO DELIVERY 100%",t2:"Katalog Premium (12 Produk 1Jt-100Jt)",buy:"Beli",pay:"BAYAR & AUTO DELIVERY SEKARANG",rate:"Kurs: 1 USD = Rp 16.500 | Multi Bahasa Aktif"},
+en:{t1:"NEXUS MEGA AUTO DELIVERY 100%",t2:"Premium Catalog (12 Products 1M-100M)",buy:"Buy",pay:"PAY & AUTO DELIVERY NOW",rate:"Rate: 1 USD = Rp 16,500"},
+zh:{t1:"NEXUS 超级自动交付",t2:"高级目录 (12 产品)",buy:"购买",pay:"付款并交付",rate:"汇率 1 USD = Rp 16,500"},
+ar:{t1:"نيكسوس ميجا توصيل",t2:"كتالوج مميز (12 منتج)",buy:"شراء",pay:"ادفع الآن",rate:"1 USD = Rp 16,500"},
+jp:{t1:"NEXUS メガ自動配信",t2:"プレミアムカタログ (12製品)",buy:"購入",pay:"支払い＆配信",rate:"1 USD = Rp 16,500"}
 };
 const PRODUCTS=[
-{id:"V30",name:"V30 ULTRA ENTERPRISE",price:1500000,file:"V30 Enterprise Source + License + Deploy Guide"},
-{id:"V21",name:"V21 QUANTUM SHIELD PRO",price:4999000,file:"V21 Quantum Shield - Military Grade Security Module + Activation Key"},
-{id:"V40",name:"V40 TITAN CORE 1M+",price:7500000,file:"V40 Titan Core - 1M TPS Engine + API + Private Key + Vault Rules"},
-{id:"VP",name:"NEXUS 9999 A2Z Z2A REAL ULTIMATE",price:12500000,file:"NEXUS 9999 Ultimate Package - Full Store + Vault + Auto Delivery System"},
-{id:"VX",name:"NEXUS X - PRIVATE VAULT",price:25000000,file:"NEXUS X - Private BRI Vault System + QRIS + Dashboard"}
+{id:"V10",cat:"STARTER",name:"V10 STARTER KIT",price:1000000,file:"Starter Source + Basic License"},
+{id:"V15",cat:"STARTER",name:"V15 LITE COMMERCE",price:1500000,file:"Lite E-Commerce + BRI Payment Module"},
+{id:"V20",cat:"PRO",name:"V20 PRO SELLER",price:2500000,file:"Pro Seller Dashboard + Auto Delivery v1"},
+{id:"V25",cat:"PRO",name:"V25 PRO MAX",price:3999000,file:"Pro Max + Multi Bahasa + IDR Convert"},
+{id:"V30",cat:"ENTERPRISE",name:"V30 ULTRA ENTERPRISE",price:4999000,file:"V30 Enterprise + Full API + License"},
+{id:"V35",cat:"ENTERPRISE",name:"V35 ULTRA SHIELD",price:7500000,file:"Ultra Shield Security + Quantum Encrypt"},
+{id:"V40",cat:"TITAN",name:"V40 TITAN CORE 1M+",price:12500000,file:"Titan Core - 1M TPS Engine + Vault Rules"},
+{id:"V45",cat:"TITAN",name:"V45 TITAN PLUS",price:18000000,file:"Titan Plus + QRIS + Private Vault System"},
+{id:"V50",cat:"ULTIMATE",name:"V50 OMEGA ULTIMATE",price:25000000,file:"Omega Ultimate - Full Store + Auto Delivery Pro"},
+{id:"V60",cat:"ULTIMATE",name:"V60 NEXUS 9999 A2Z Z2A",price:35000000,file:"9999 A2Z Z2A Real - Full Package Real Goal 100%"},
+{id:"VX",cat:"PRIVATE",name:"NEXUS X - PRIVATE VAULT",price:55000000,file:"Private Vault Direct Settlement + Dashboard Admin"},
+{id:"V100",cat:"EMPIRE",name:"NEXUS EMPIRE 100JT - FOUNDER",price:100000000,file:"Empire Founder - All Products + Lifetime License + White Label + Source Code Full"}
 ];
-let LANG="id", CURR="IDR", CURRENT=null, LAST=null;
+let LANG="id", CURRENT=null, LAST=null;
 function setLang(v){LANG=v;document.getElementById('t1').innerText=T[v].t1;document.getElementById('t2').innerText=T[v].t2;document.getElementById('bPay').innerText=T[v].pay;document.getElementById('rate').innerText=T[v].rate;render();}
 function fmt(idr){
-let c=document.getElementById('curr').value;
-let r=RATES[c];
-if(c==="IDR") return `<div class=price-main>Rp ${idr.toLocaleString('id-ID')}</div><div class=price-sub>≈ $${(idr/16500).toFixed(2)} USD</div>`;
-let cv=idR=>idR/r;
-let val=cv(idr);
-let disp=c==="JPY"?`¥${Math.round(val).toLocaleString()}`:`${c} ${val.toFixed(2)}`;
-return `<div class=price-main>${disp}</div><div class=price-sub>≈ Rp ${idr.toLocaleString('id-ID')}</div>`;
+let c=document.getElementById('curr').value;let r=RATES[c];
+if(c==="IDR") return `<div class=price-main>Rp ${idr.toLocaleString('id-ID')}</div><div class=price-sub>≈ $${(idr/16500).toFixed(2)} USD • ${T[LANG].buy} auto</div>`;
+let v=idR=>idR/r;let val=v(idr);let disp=c==="JPY"?`¥${Math.round(val).toLocaleString()}`:`${c} ${val.toFixed(2)}`;
+return `<div class=price-main>${disp}</div><div class=price-sub>≈ Rp ${idr.toLocaleString('id-ID')} IDR</div>`;
 }
 function render(){
-let h="";PRODUCTS.forEach(p=>{
-h+=`<div class=product><div style=flex:1><b>${p.name}</b><br><span style=font-size:11px;color:#94a3b8>${p.file}</span><br>${fmt(p.price)}</div><button onclick="checkout('${p.id}')">${T[LANG].buy}</button></div>`;
+let q=(document.getElementById('search').value||'').toLowerCase();
+let h="";PRODUCTS.filter(p=>p.name.toLowerCase().includes(q)||p.cat.toLowerCase().includes(q)).forEach(p=>{
+h+=`<div class=product><div style=flex:1><span class=cat>${p.cat}</span> <b>${p.name}</b><br><span style=font-size:11px;color:#94a3b8>${p.file}</span><br>${fmt(p.price)}</div><button onclick="checkout('${p.id}')">${T[LANG].buy}</button></div>`;
 });
-document.getElementById('catalog').innerHTML=h;
+document.getElementById('catalog').innerHTML=h||'Tidak ada produk';
+let orders=JSON.parse(localStorage.getItem('nexus_orders')||'[]');document.getElementById('orderBtn').innerText=`📦 My Orders (${orders.length})`;
 }
-function checkout(id){
-CURRENT=PRODUCTS.find(x=>x.id===id);
-document.getElementById('detail').innerHTML=`<div class=code-box>${CURRENT.name}<br>${fmt(CURRENT.price)}<br>File: ${CURRENT.file}</div>`;
-document.getElementById('modal').style.display='flex';document.getElementById('step1').style.display='block';document.getElementById('step2').style.display='none';document.getElementById('step3').style.display='none';
-}
+function checkout(id){CURRENT=PRODUCTS.find(x=>x.id===id);document.getElementById('detail').innerHTML=`<div class=code-box>${CURRENT.name}<br><span class=cat>${CURRENT.cat}</span><br>${fmt(CURRENT.price)}<br>File: ${CURRENT.file}</div>`;document.getElementById('modal').style.display='flex';document.getElementById('step1').style.display='block';document.getElementById('step2').style.display='none';document.getElementById('step3').style.display='none';}
 function process(){
-document.getElementById('step1').style.display='none';document.getElementById('step2').style.display='block';
-let bar=document.getElementById('bar');bar.style.width='0%';setTimeout(()=>bar.style.width='100%',100);
+document.getElementById('step1').style.display='none';document.getElementById('step2').style.display='block';let bar=document.getElementById('bar');bar.style.width='0%';setTimeout(()=>bar.style.width='100%',100);
 let txt=document.getElementById('txt2');txt.innerText='Verifikasi BRI 015901054376505...';
-setTimeout(()=>{txt.innerText='Generate License Key...';},800);
-setTimeout(()=>{txt.innerText='Auto Delivery ke email/dashboard...';},1600);
+setTimeout(()=>txt.innerText='Generate License Key Premium...',800);
+setTimeout(()=>txt.innerText='Packing file auto delivery...',1600);
 setTimeout(()=>deliver(),2200);
 }
-function genKey(){let s="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let k="NEXUS-";for(let i=0;i<12;i++){if(i>0&&i%4===0)k+="-";k+=s[Math.floor(Math.random()*s.length)]}return k;}
+function genKey(){let s="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let k="NEXUS-";for(let i=0;i<16;i++){if(i>0&&i%4===0)k+="-";k+=s[Math.floor(Math.random()*s.length)]}return k;}
 function deliver(){
-let order="NXS-"+Date.now().toString().slice(-8);
-let license=genKey();
-LAST={order,license,product:CURRENT.name,price:CURRENT.price,file:CURRENT.file,date:new Date().toLocaleString('id-ID')};
+let order="NXS-"+Date.now().toString().slice(-8);let license=genKey();
+LAST={order,license,product:CURRENT.name,price:CURRENT.price,file:CURRENT.file,cat:CURRENT.cat,date:new Date().toLocaleString('id-ID')};
 let orders=JSON.parse(localStorage.getItem('nexus_orders')||'[]');orders.unshift(LAST);localStorage.setItem('nexus_orders',JSON.stringify(orders));
 document.getElementById('step2').style.display='none';document.getElementById('step3').style.display='block';
-document.getElementById('delivery').innerHTML=`<div class=code-box>ORDER ID: ${order}<br>PRODUCT: ${CURRENT.name}<br>LICENSE: <b style=color:#38bdf8>${license}</b><br>PRICE: Rp ${CURRENT.price.toLocaleString('id-ID')}<br>VAULT: BRI 015901054376505 An HERY HERMAWAN<br>STATUS: DELIVERED - REAL GOAL 100%<br>FILE: ${CURRENT.file}</div><p style=font-size:11px;color:#94a3b8>Simpan license ini. File otomatis terdownload. Pembeli langsung dapat hasil tanpa tunggu admin.</p>`;
+document.getElementById('delivery').innerHTML=`<div class=code-box>ORDER: ${order}<br>PRODUCT: ${CURRENT.name}<br>CAT: ${CURRENT.cat}<br>LICENSE: <b style=color:#38bdf8>${license}</b><br>PRICE: Rp ${CURRENT.price.toLocaleString('id-ID')}<br>VAULT: BRI 015901054376505 An HERY HERMAWAN<br>STATUS: DELIVERED REAL 100%<br>FILE: ${CURRENT.file}</div>`;
+render();
 }
 function download(){
-if(!LAST)return;let content=`NEXUS PREMIUM AUTO DELIVERY\n===========================\nOrder: ${LAST.order}\nProduct: ${LAST.product}\nLicense: ${LAST.license}\nPrice: Rp ${LAST.price.toLocaleString('id-ID')}\nVault: BRI 015901054376505 An HERY HERMAWAN\nFile: ${LAST.file}\nDate: ${LAST.date}\n\nINSTRUKSI:\n1. Simpan License Key\n2. Extract File Deployment\n3. Real Goal 100% Active\n\nAuto Delivery System - NEXUS Store\n`;
-let blob=new Blob([content],{type:'text/plain'});let url=URL.createObjectURL(blob);let a=document.createElement('a');a.href=url;a.download=`${LAST.order}-${LAST.license}.txt`;a.click();
+if(!LAST)return;let c=`NEXUS MEGA AUTO DELIVERY\nOrder: ${LAST.order}\nProduct: ${LAST.product}\nCat: ${LAST.cat}\nLicense: ${LAST.license}\nPrice: Rp ${LAST.price.toLocaleString('id-ID')}\nVault: BRI 015901054376505 An HERY HERMAWAN\nFile: ${LAST.file}\nDate: ${LAST.date}\n`;let b=new Blob([c],{type:'text/plain'});let u=URL.createObjectURL(b);let a=document.createElement('a');a.href=u;a.download=`${LAST.order}.txt`;a.click();
 }
 function closeM(){document.getElementById('modal').style.display='none';}
-function showOrders(){
-let orders=JSON.parse(localStorage.getItem('nexus_orders')||'[]');
-if(!orders.length){alert('Belum ada pesanan. Beli dulu untuk auto delivery.');return;}
-let txt="MY ORDERS - AUTO DELIVERY HISTORY\n";orders.forEach(o=>{txt+=`${o.order} | ${o.product}\nLicense: ${o.license}\nRp ${o.price.toLocaleString('id-ID')} | ${o.date}\n---\n`;});
-alert(txt);
-}
+function showOrders(){let o=JSON.parse(localStorage.getItem('nexus_orders')||'[]');if(!o.length){alert('Belum ada pesanan');return;}let t="MY ORDERS\n";o.forEach(x=>{t+=`${x.order} | ${x.product} | ${x.license} | Rp ${x.price.toLocaleString('id-ID')}\n`;});alert(t);}
 setLang('id');
 </script>
 </body></html>

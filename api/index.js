@@ -1,1 +1,1 @@
-module.exports=(req,res)=>{res.setHeader("Access-Control-Allow-Origin","*");res.json({status:"AUTO DELIVERY ONLINE",min_price:"Rp 1.500.000+",auto_delivery:true,multilang:true,idr_convert:true,bank:{no:"015901054376505",an:"HERY HERMAWAN"}})};
+module.exports=(req,res)=>{res.setHeader("Access-Control-Allow-Origin","*");res.json({status:"MEGA 12 PRODUCTS ONLINE",count:12,range:"1Jt-100Jt",auto_delivery:true,bank:{no:"015901054376505",an:"HERY HERMAWAN"}})};
