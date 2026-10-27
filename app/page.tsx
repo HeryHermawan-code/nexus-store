@@ -2,32 +2,36 @@
 import {useEffect,useState} from 'react'
 export default function Home(){
   const [products,setProducts]=useState<any[]>([])
-  const [sales,setSales]=useState<any>(null)
-  useEffect(()=>{
-    fetch('/api/produk').then(r=>r.json()).then(d=>setProducts(d.products))
-    fetch('/api/jual').then(r=>r.json()).then(d=>setSales(d))
-  },[])
+  const [result,setResult]=useState<any>(null)
+  useEffect(()=>{fetch('/api/produk').then(r=>r.json()).then(d=>setProducts(d.products))},[])
   async function beli(p:any){
-    const wa=prompt("Masukkan WA kamu untuk kirim file otomatis:")
-    if(!wa) return
+    // 1. Bayar -> dapat token
     const bayar=await fetch('/api/bayar',{method:'POST', body:JSON.stringify({product:p.name, price:p.price})}).then(r=>r.json())
-    await fetch('/api/jual',{method:'POST', body:JSON.stringify({product:p.name, price:p.price, wa})}).then(r=>r.json())
-    const kirim=await fetch('/api/kirim',{method:'POST', body:JSON.stringify({product:p.name, buyer_wa:wa})}).then(r=>r.json())
-    alert(`✅ ORDER TERIKAT KE KITA\nBank: ${bayar.bank} ${bayar.account_masked}\nProduk: ${p.name}\nLicense: ${kirim.license}\n\n${bayar.instruction}\nWA: ${bayar.wa}`)
-    window.open(bayar.wa,'_blank')
+    // 2. Delivery -> langsung dapat produk tanpa WA tanpa perintah
+    const delivery=await fetch('/api/delivery',{method:'POST', body:JSON.stringify({token:bayar.token, product:p.name})}).then(r=>r.json())
+    setResult({bayar, delivery})
   }
   return(
     <div style={{padding:20, background:'#000', color:'#0f0', minHeight:'100vh', fontFamily:'monospace'}}>
-      <h1>🚀 NEXUS 6666 V5 SALES MACHINE</h1>
-      <p>Factory tiap jam | Sales terikat ke kita | Omzet: Rp {sales?.total_omzet?.toLocaleString()||0} | {sales?.total_sales||0} order</p>
-      <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))', gap:15, marginTop:20}}>
+      <h1>🚀 NEXUS 6666 V6 INSTANT DELIVERY</h1>
+      <p>Token Factory tiap 30 menit | Klik Bayar = Langsung Dapat Produk | Tanpa WA | Tanpa Perintah Manusia | Terikat Auto</p>
+      <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:15, marginTop:20}}>
         {products.map((p,i)=><div key={i} style={{border:'1px solid #0f0', padding:15, borderRadius:12}}>
           <h3 style={{margin:0}}>{p.name}</h3><p>Rp {p.price?.toLocaleString()}</p>
-          <small>{p.created||''}</small>
-          <button onClick={()=>beli(p)} style={{background:'#0f0', color:'#000', padding:'10px', width:'100%', fontWeight:'bold', marginTop:10, cursor:'pointer'}}>BELI + AUTO KIRIM</button>
+          <button onClick={()=>beli(p)} style={{background:'#0f0', color:'#000', padding:'12px', width:'100%', fontWeight:'bold', cursor:'pointer'}}>BAYAR LANGSUNG DAPAT PRODUK</button>
         </div>)}
       </div>
-      <div style={{marginTop:30}}><a href="/api/jual" target="_blank" style={{color:'#0f0'}}>📊 LIHAT PENJUALAN TERIKAT /api/jual</a></div>
+      {result && <div style={{marginTop:30, border:'2px solid #0f0', padding:20, background:'#001100', whiteSpace:'pre-wrap'}}>
+        <h2>✅ DELIVERY INSTANT SUCCESS</h2>
+        <p><b>Bank:</b> {result.bayar.bank} {result.bayar.account_masked} a/n {result.bayar.name}</p>
+        <p><b>Token:</b> {result.bayar.token}</p>
+        <p><b>License:</b> {result.delivery.license}</p>
+        <p><b>File:</b> {result.delivery.file_content}</p>
+        <p>Produk sudah terkirim otomatis tanpa WA - terikat ke kita selamanya</p>
+      </div>}
+      <div style={{marginTop:20, fontSize:12}}>
+        <a href="/api/token" style={{color:'#0f0'}}> /api/token </a> | <a href="/api/produk" style={{color:'#0f0'}}> /api/produk </a> | <a href="/api/delivery" style={{color:'#0f0'}}> /api/delivery </a>
+      </div>
     </div>
   )
 }
