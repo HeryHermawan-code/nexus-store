@@ -1,1 +1,1 @@
-module.exports=(req,res)=>res.json({status:'ONLINE',bank:'BRI 015901054376505 HERY HERMAWAN',mode:'3X-ABSOLUTE',tunnel:'6666-7777-ACTIVE',time:new Date().toISOString()})
+module.exports=(req,res)=>{res.json({status:'ONLINE',real_goal:'100',a2z:'ACTIVE',z2a:'ACTIVE',mode:'3X-FINAL-REAL',bank:'BRI 015901054376505 HERY HERMAWAN',products:[{id:'V30',price:7500},{id:'V21',price:29999}],tunnel:'6666-7777-ACTIVE',time:new Date().toISOString()})}
