@@ -1,14 +1,110 @@
 <!DOCTYPE html>
-<html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXUS - REAL 100%</title>
-<style>body{font-family:sans-serif;background:#0b0f19;color:#e2e8f0;margin:0;padding:20px}.container{max-width:600px;margin:0 auto}.card{background:#1e293b;border:1px solid #334155;padding:20px;border-radius:12px;margin-bottom:20px}.vault-info{background:#0f172a;border-left:4px solid #38bdf8;padding:12px;font-family:monospace}.product-item{border-bottom:1px solid #334155;padding:15px 0;display:flex;justify-content:space-between}button{background:#0284c7;color:#fff;border:none;padding:10px 18px;border-radius:6px;font-weight:bold}</style>
-</head><body><div class="container">
-<h1 style="text-align:center">NEXUS STOREFRONT - REAL GOAL 100%</h1>
-<div class="card"><h2>Destinasi Brankas</h2><div class="vault-info">BRI 015901054376505<br>An HERY HERMAWAN<br>Status: Verified & Secure - REAL</div></div>
-<div class="card"><h2>Katalog</h2><div id="catalog"></div></div>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS PREMIUM - High Value Digital Assets</title>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#0b0f19;color:#e2e8f0;margin:0;padding:16px}
+.container{max-width:700px;margin:0 auto}
+.card{background:#1e293b;border:1px solid #334155;padding:20px;border-radius:14px;margin-bottom:16px}
+.header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+h1{font-size:22px;margin:0}
+.vault-info{background:#0f172a;border-left:4px solid #38bdf8;padding:12px;font-family:monospace;font-size:13px;line-height:1.6}
+.product-item{border-bottom:1px solid #334155;padding:18px 0;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.product-item:last-child{border:none}
+.price-main{color:#38bdf8;font-weight:800;font-family:monospace;font-size:16px}
+.price-sub{color:#94a3b8;font-size:11px;font-family:monospace}
+button{background:#0284c7;color:#fff;border:none;padding:12px 22px;border-radius:8px;font-weight:bold;cursor:pointer}
+button:hover{background:#0369a1}
+select{background:#0f172a;color:#e2e8f0;border:1px solid #334155;padding:8px 12px;border-radius:8px}
+.badge{background:#22c55e;color:#052e16;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:bold}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1 id="title">NEXUS STOREFRONT - PREMIUM 100%</h1>
+<div>
+<select id="lang" onchange="setLang(this.value)">
+<option value="id">🇮🇩 Indonesia</option>
+<option value="en">🇺🇸 English</option>
+<option value="zh">🇨🇳 中文</option>
+<option value="ar">🇸🇦 العربية</option>
+<option value="jp">🇯🇵 日本語</option>
+</select>
+<select id="curr" onchange="render()">
+<option value="IDR">IDR - Rupiah</option>
+<option value="USD">USD - Dollar</option>
+<option value="EUR">EUR - Euro</option>
+<option value="SGD">SGD - Singapore</option>
+<option value="JPY">JPY - Yen</option>
+</select>
 </div>
+</div>
+
+<div class="card">
+<h2 id="vaultTitle">Destinasi Brankas Finansial</h2>
+<div class="vault-info">
+BRI 015901054376505<br>An HERY HERMAWAN<br><span id="vaultStatus">Status: Verified & Secure - REAL PREMIUM</span><br>
+<span class="badge">HIGH VALUE SETTLEMENT</span> <span class="badge">AUTO IDR CONVERT</span>
+</div>
+<p style="font-size:11px;color:#64748b" id="rateInfo">Kurs: 1 USD ≈ Rp 16.500 | Auto Convert Aktif</p>
+</div>
+
+<div class="card">
+<h2 id="catalogTitle">Katalog Premium (1 Juta+)</h2>
+<div id="catalog"></div>
+</div>
+</div>
+
 <script>
-const P=[{id:"V30",name:"V30 ULTRA",price:7500},{id:"V21",name:"V21 QUANTUM SHIELD",price:29999},{id:"VP",name:"9999 A2Z Z2A REAL",price:100000}];
-let h='';P.forEach(x=>{h+=`<div class="product-item"><div><b>${x.name}</b><br>Rp ${x.price.toLocaleString('id-ID')}</div><button onclick="alert('Transfer BRI 015901054376505 An HERY HERMAWAN untuk ${x.name}')">Beli</button></div>`});document.getElementById('catalog').innerHTML=h;
+const RATES={IDR:1,USD:16500,EUR:18000,SGD:12200,JPY:108,CNY:2280};
+const PRODUCTS=[
+{id:"V30",name:{id:"V30 ULTRA ENTERPRISE",en:"V30 ULTRA ENTERPRISE",zh:"V30 超级企业版",ar:"V30 الترا انتربرايز",jp:"V30 ウルトラエンタープライズ"},priceIDR:1500000,desc:{id:"Lisensi Enterprise Full",en:"Full Enterprise License",zh:"企业完整许可",ar:"ترخيص مؤسسي كامل",jp:"フルエンタープライズライセンス"}},
+{id:"V21",name:{id:"V21 QUANTUM SHIELD PRO",en:"V21 QUANTUM SHIELD PRO",zh:"V21 量子盾专业版",ar:"V21 درع الكم برو",jp:"V21 クォンタムシールド Pro"},priceIDR:4999000,desc:{id:"Keamanan Quantum Military Grade",en:"Military Grade Quantum Security",zh:"军用级量子安全",ar:"أمان كمي عسكري",jp:"軍事グレード量子セキュリティ"}},
+{id:"VP",name:{id:"NEXUS 9999 A2Z Z2A REAL ULTIMATE",en:"NEXUS 9999 A2Z Z2A REAL ULTIMATE",zh:"NEXUS 9999 终极真实版",ar:"نيكسوس 9999 الحقيقي المطلق",jp:"NEXUS 9999 リアルアルティメット"},priceIDR:12500000,desc:{id:"Paket Ultimate Real Goal 100%",en:"Ultimate Real Goal 100% Package",zh:"终极真实目标100%套餐",ar:"حزمة الهدف الحقيقي 100% النهائية",jp:"究極リアルゴール100%パッケージ"}},
+{id:"V40",name:{id:"V40 TITAN CORE 1M+",en:"V40 TITAN CORE 1M+",zh:"V40 泰坦核心",ar:"V40 تايتان كور",jp:"V40 タイタンコア"},priceIDR:7500000,desc:{id:"Infrastruktur Core 1 Juta Transaksi",en:"Core for 1M+ Transactions",zh:"百万交易核心",ar:"نواة لمليون معاملة",jp:"100万トランザクション対応コア"}},
+{id:"VX",name:{id:"NEXUS X - PRIVATE VAULT",en:"NEXUS X - PRIVATE VAULT",zh:"NEXUS X 私人金库",ar:"نيكسوس X خزنة خاصة",jp:"NEXUS X プライベートボールト"},priceIDR:25000000,desc:{id:"Brankas Privat Direct Settlement",en:"Private Vault Direct Settlement",zh:"私人金库直接结算",ar:"خزنة خاصة تسوية مباشرة",jp:"プライベートボールト直接決済"}}
+];
+
+const T={
+id:{title:"NEXUS STOREFRONT - PREMIUM 100%",vaultTitle:"Destinasi Brankas Finansial",catalogTitle:"Katalog Premium (1 Juta+)",vaultStatus:"Status: Verified & Secure - REAL PREMIUM",buy:"Beli",rate:"Kurs: 1 USD ≈ Rp 16.500 | Auto Convert Aktif"},
+en:{title:"NEXUS STOREFRONT - PREMIUM 100%",vaultTitle:"Financial Vault Destination",catalogTitle:"Premium Catalog (1M+)",vaultStatus:"Status: Verified & Secure - REAL PREMIUM",buy:"Buy",rate:"Rate: 1 USD ≈ Rp 16,500 | Auto IDR Convert Active"},
+zh:{title:"NEXUS 高端商店 - 100%真实",vaultTitle:"金融金库目的地",catalogTitle:"高端目录 (100万+)",vaultStatus:"状态：已验证且安全 - 真实高端",buy:"购买",rate:"汇率：1美元 ≈ 16,500印尼盾 | 自动转换"},
+ar:{title:"نيكسوس المتجر المميز - 100% حقيقي",vaultTitle:"وجهة الخزنة المالية",catalogTitle:"كتالوج مميز (1M+)",vaultStatus:"الحالة: موثق وآمن - مميز حقيقي",buy:"شراء",rate:"السعر: 1 دولار ≈ 16,500 روبية | تحويل تلقائي"},
+jp:{title:"NEXUS プレミアムストア - 100%リアル",vaultTitle:"金融ボールト宛先",catalogTitle:"プレミアムカタログ (100万+)",vaultStatus:"ステータス：検証済み＆安全 - リアルプレミアム",buy:"購入",rate:"レート：1 USD ≈ Rp 16,500 | 自動IDR変換"}
+};
+
+let LANG="id";
+function setLang(l){LANG=l;document.getElementById('title').innerText=T[l].title;document.getElementById('vaultTitle').innerText=T[l].vaultTitle;document.getElementById('catalogTitle').innerText=T[l].catalogTitle;document.getElementById('vaultStatus').innerText=T[l].vaultStatus;document.getElementById('rateInfo').innerText=T[l].rate;render();}
+
+function formatPrice(idr){
+let cur=document.getElementById('curr').value;
+let rate=RATES[cur];
+if(cur==="IDR"){return `<div class="price-main">Rp ${idr.toLocaleString('id-ID')}</div><div class="price-sub">≈ $${(idr/16500).toFixed(2)} USD</div>`}
+else{
+let converted=idr/rate;
+let display=cur==="JPY"?`¥${Math.round(converted).toLocaleString('id-ID')}`:cur==="USD"?`$${converted.toLocaleString('en-US',{minimumFractionDigits:2})}`:cur==="EUR"?`€${converted.toLocaleString('en-US',{minimumFractionDigits:2})}`:`${cur} ${converted.toFixed(2)}`;
+return `<div class="price-main">${display}</div><div class="price-sub">≈ Rp ${idr.toLocaleString('id-ID')} IDR</div>`
+}
+}
+
+function render(){
+let html='';PRODUCTS.forEach(p=>{
+let name=p.name[LANG]||p.name.id;
+let desc=p.desc[LANG]||p.desc.id;
+html+=`<div class="product-item"><div style="flex:1"><b>${name}</b><br><span style="font-size:12px;color:#94a3b8">${desc}</span><br>${formatPrice(p.priceIDR)}</div><button onclick="buy('${p.id}',${p.priceIDR})">${T[LANG].buy}</button></div>`;
+});
+document.getElementById('catalog').innerHTML=html;
+}
+
+function buy(id,price){
+let cur=document.getElementById('curr').value;
+alert(`${T[LANG].buy} : ${id}\nTotal: ${cur} -> Rp ${price.toLocaleString('id-ID')} \n\nDirect Settlement ke:\nBRI 015901054376505\nAn HERY HERMAWAN\n\nPremium Real Goal 100% - Auto IDR Convert`);
+}
+
+setLang('id');
 </script>
-</body></html>
+</body>
+</html>

@@ -1,1 +1,1 @@
-module.exports=(req,res)=>{res.setHeader("Access-Control-Allow-Origin","*");res.json({status:"ONLINE",bank:{no:"015901054376505",an:"HERY HERMAWAN"},real_goal:"100"})};
+module.exports=(req,res)=>{res.setHeader("Access-Control-Allow-Origin","*");res.json({status:"PREMIUM ONLINE",min_price:"Rp 1.500.000+",bank:{no:"015901054376505",an:"HERY HERMAWAN"},features:["1 Juta+","Multi Bahasa","Auto IDR Convert"],real_goal:"100 PREMIUM"})};
