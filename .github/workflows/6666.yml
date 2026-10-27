@@ -1,11 +1,13 @@
-name: 6666 Autopilot
+name: 6666-3X
 on:
  push:
   branches: [main]
  workflow_dispatch:
+ schedule:
+    - cron: '0 */6 * * *'
 jobs:
  deploy:
   runs-on: ubuntu-latest
   steps:
-   - uses: actions/checkout@v4
-   - run: echo GREEN LIVE
+      - uses: actions/checkout@v4
+      - run: echo GREEN LIVE 3X
