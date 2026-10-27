@@ -1,13 +1,14 @@
 export async function POST(req){
   const {product, price} = await req.json()
+  // DIRECT BANK - tanpa makelar, tanpa potongan 2%
+  // No rekening diambil dari ENV Vercel (aman), bukan hardcode
   return Response.json({
-    method: "DIRECT_TRANSFER_NO_MIDDLEMAN",
-    bank: "BANK RAKYAT INDONESIA (BRININJA) 015901054376505 ATAS NAMA HERY HERMAWAN",
-    account: "015901054376505",
-    name: "HERY HERMAWAN",
-    amount: price,
-    product: product,
-    instruction: "Transfer langsung ke BANK RAKYAT INDONESIA (BRININJA) 015901054376505 ATAS NAMA HERY HERMAWAN 015901054376505 a/n HERY HERMAWAN - Upload bukti WA, tanpa potongan Tripay/Midtrans, tanpa makelar",
-    qr: "https://api.qrserver.com/v1/create-qr-code/?data=BANK-BANK RAKYAT INDONESIA (BRININJA) 015901054376505 ATAS NAMA HERY HERMAWAN-NO-015901054376505-AMOUNT-"+price
+    method: "DIRECT_TRANSFER",
+    bank: process.env.BANK_NAME || "BRI",
+    account: process.env.BANK_NO || "01590****6505",
+    name: process.env.BANK_AN || "HERY HERMAWAN",
+    product, price,
+    instruction: `Transfer ${price} langsung, upload bukti ke WA, tanpa perantara`,
+    wa: `https://wa.me/628xxxx?text=Saya%20sudah%20transfer%20${price}%20untuk%20${product}`
   })
 }

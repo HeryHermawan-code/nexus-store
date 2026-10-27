@@ -1,10 +1,9 @@
 export async function GET(){
-  // 6666 AGENT: Produksi kebutuhan pembeli dunia real-time
-  const now = new Date().toISOString()
+  // 6666 AGENT - Produksi kebutuhan pembeli dunia
+  const trends = await fetch("https://api.github.com/search/repositories?q=termux+automation&sort=stars", {next:{revalidate:3600}}).then(r=>r.json()).catch(()=>({items:[]}))
   return Response.json({
-    timestamp: now,
-    worldwide_needs: ["NEXUS V60 Self-Heal Termux", "Direct Bank QR No Fee", "AI Trend Hunter"],
-    future_needs: ["Automation Tanpa Token", "Toko Free Vercel Forever"],
-    note: "Update tiap jam via 6666 agent"
+    worldwide_needs: ["V60 NEXUS A2Z Z2A", "Direct Bank No Fee", "Self-Heal Termux"],
+    future: ["AI Trend Hunter", "Auto Deploy Vercel"],
+    timestamp: new Date().toISOString()
   })
 }
