@@ -1,0 +1,29 @@
+name: 6666-Product-Factory
+on:
+  schedule:
+    - cron: '0 * * * *' # tiap jam produksi produk baru
+  workflow_dispatch:
+  push:
+    branches: [main]
+jobs:
+  factory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '20'}
+      - name: Produce Product
+        run: |
+          mkdir -p data
+          DATE=$(date +%Y%m%d%H)
+          TREND="NEXUS V$(shuf -i 61-99 -n 1) $(shuf -e ULTIMATE MEGA OMEGA QUANTUM A2Z Z2A SHIELD -n 1)"
+          PRICE=$(shuf -i 35000-150000 -n 1)
+          echo "{\"id\":\"$DATE\",\"name\":\"$TREND AUTO\",\"price\":$PRICE,\"created\":\"$(date -u)\"}" >> data/produk.jsonl
+          echo "Produced: $TREND - $PRICE"
+      - name: Auto Commit
+        run: |
+          git config user.name "6666-Factory"
+          git config user.email "factory@nexus.bot"
+          git add data/produk.jsonl || true
+          git commit -m "Factory: auto produce $(date)" || echo "no new product"
+          git push origin main || true

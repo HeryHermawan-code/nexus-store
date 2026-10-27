@@ -1,18 +1,14 @@
 export async function POST(req){
-  try{
-    const {product, price} = await req.json()
-    return Response.json({
-      method: "DIRECT_TRANSFER_NO_MIDDLEMAN",
-      bank: process.env.BANK_NAME || "BRI",
-      account: process.env.BANK_NO ? process.env.BANK_NO.substring(0,4)+"****"+process.env.BANK_NO.slice(-4) : "0159****6505",
-      name: process.env.BANK_AN || "HERY HERMAWAN",
-      product, price,
-      instruction: `Transfer Rp ${price} untuk ${product} langsung ke rekening diatas, lalu upload bukti via WA`,
-      wa: `https://wa.me/6281287064123?text=Halo%20saya%20sudah%20transfer%20${price}%20untuk%20${product}`,
-      timestamp: new Date().toISOString()
-    })
-  }catch(e){
-    return Response.json({error:e.message},{status:500})
-  }
+  const {product, price} = await req.json()
+  // DIRECT - tanpa Tripay/Midtrans potongan
+  return Response.json({
+    method:"DIRECT_TRANSFER_NO_MIDDLEMAN",
+    bank: process.env.BANK_NAME||"BRI",
+    account_masked: process.env.BANK_NO ? process.env.BANK_NO.slice(0,4)+"****"+process.env.BANK_NO.slice(-4) : "0159****6505",
+    name: process.env.BANK_AN||"HERY HERMAWAN",
+    product, price,
+    instruction:`Transfer ${price} untuk ${product} - upload bukti WA, auto kirim file`,
+    wa:`https://wa.me/${process.env.WA_NUMBER||'6281287064123'}?text=Sudah%20transfer%20${price}%20${product}`,
+    note:"Tanpa makelar, tanpa potongan 2% - langsung ke rekening kamu"
+  })
 }
-export async function GET(){ return Response.json({status:"API Bayar Active - POST untuk beli"}) }
