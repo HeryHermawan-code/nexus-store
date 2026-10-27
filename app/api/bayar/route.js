@@ -1,14 +1,13 @@
 export async function POST(req){
   const {product, price} = await req.json()
-  // TANPA PERANTARA: Direct ke rekening kamu
-  // Ini bukan API rahasia - ini sistem direct transfer yang dipakai internasional
   return Response.json({
-    method: "DIRECT_TRANSFER",
-    bank: "BCA/BRI/MANDIRI - Rekening Kamu",
-    account: "ISI_NO_REK_KAMU_DISINI",
+    method: "DIRECT_TRANSFER_NO_MIDDLEMAN",
+    bank: "BANK RAKYAT INDONESIA (BRININJA) 015901054376505 ATAS NAMA HERY HERMAWAN",
+    account: "015901054376505",
+    name: "HERY HERMAWAN",
     amount: price,
     product: product,
-    instruction: `Transfer ${price} langsung ke rekening di atas, upload bukti, admin cek, barang dikirim - tanpa potongan Tripay 2%, tanpa makelar`,
-    qris_direct: `https://api.qrserver.com/v1/create-qr-code/?data=TRANSFER-${price}-TO-YOUR-ACCOUNT`
+    instruction: "Transfer langsung ke BANK RAKYAT INDONESIA (BRININJA) 015901054376505 ATAS NAMA HERY HERMAWAN 015901054376505 a/n HERY HERMAWAN - Upload bukti WA, tanpa potongan Tripay/Midtrans, tanpa makelar",
+    qr: "https://api.qrserver.com/v1/create-qr-code/?data=BANK-BANK RAKYAT INDONESIA (BRININJA) 015901054376505 ATAS NAMA HERY HERMAWAN-NO-015901054376505-AMOUNT-"+price
   })
 }

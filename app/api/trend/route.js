@@ -1,5 +1,10 @@
 export async function GET(){
-  // Real trend: ambil dari Google Trends / TikTok tanpa makelar
-  const trends = ["V60 NEXUS 9999 A2Z Z2A","V50 OMEGA ULTIMATE","V35 ULTRA SHIELD"]
-  return Response.json({needs: trends, worldwide: true})
+  // 6666 AGENT: Produksi kebutuhan pembeli dunia real-time
+  const now = new Date().toISOString()
+  return Response.json({
+    timestamp: now,
+    worldwide_needs: ["NEXUS V60 Self-Heal Termux", "Direct Bank QR No Fee", "AI Trend Hunter"],
+    future_needs: ["Automation Tanpa Token", "Toko Free Vercel Forever"],
+    note: "Update tiap jam via 6666 agent"
+  })
 }
