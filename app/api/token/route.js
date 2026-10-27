@@ -1,7 +1,7 @@
 import fs from 'fs'; import path from 'path'
-export async function POST(req){
-  const {product}=await req.json()
-  const token=`NEXUS-${Date.now()}-${Math.random().toString(36).slice(2,8).toUpperCase()}-${product?.slice(0,3).toUpperCase()}`
+export async function POST(){
+  const token=`NEXUS-${Date.now()}-${Math.random().toString(36).slice(2,8).toUpperCase()}`
+  const product=`TOKEN-${Math.random().toString(36).slice(2,6).toUpperCase()}`
   const file=path.join(process.cwd(),'data/token.jsonl')
   try{ fs.mkdirSync(path.dirname(file),{recursive:true}); fs.appendFileSync(file, JSON.stringify({token, product, time:new Date().toISOString(), valid:true})+"\n") }catch{}
   return Response.json({token, product, valid:true, message:"Token produksi otomatis"})
