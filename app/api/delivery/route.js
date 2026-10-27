@@ -1,2 +1,2 @@
 import { NextResponse } from "next/server";
-export async function GET(req){const url=new URL(req.url);const token=url.searchParams.get("token")||"DEMO";return NextResponse.json({delivered:true,token:token,files:[token+".zip",token+"-license.json"],boundTo:"HERY HERMAWAN FOREVER",auto:true,no_wa:true});}
+ export async function GET(req){const u=new URL(req.url);const t=u.searchParams.get("token")||"DEMO";return NextResponse.json({delivered:true,automation:"A2Z-Z2A",token:t,files:[t+".zip",t+"-license.json",t+"-12-produk.zip"],message:"Pembeli klik bayar langsung dapat produk tanpa WA",boundTo:"HERY HERMAWAN FOREVER",no_wa:true,auto:true})}
