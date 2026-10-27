@@ -1,1 +1,1 @@
-module.exports=(req,res)=>{res.setHeader("Access-Control-Allow-Origin","*");res.json({status:"PREMIUM ONLINE",min_price:"Rp 1.500.000+",bank:{no:"015901054376505",an:"HERY HERMAWAN"},features:["1 Juta+","Multi Bahasa","Auto IDR Convert"],real_goal:"100 PREMIUM"})};
+module.exports=(req,res)=>{res.setHeader("Access-Control-Allow-Origin","*");res.json({status:"AUTO DELIVERY ONLINE",min_price:"Rp 1.500.000+",auto_delivery:true,multilang:true,idr_convert:true,bank:{no:"015901054376505",an:"HERY HERMAWAN"}})};
