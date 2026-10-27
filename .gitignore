@@ -1,3 +1,4 @@
 deploy.log
 live_url.txt
 auto.sh
+data/*.jsonl
