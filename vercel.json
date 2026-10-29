@@ -1,10 +1,7 @@
 {
-  "framework":"nextjs",
-  "buildCommand":"npm run build",
-  "outputDirectory":".next",
-  "crons":[
-    {"path":"/api/token-factory?product=V50","schedule":"0 * * * *"},
-    {"path":"/api/hunter","schedule":"*/30 * * * *"},
-    {"path":"/api/nexus-core?action=status&key=NEXUS-6666-OMEGA-INFINITY-A2Z-Z2A-ULTIMATE-∞-2026-BRI-015901054376505-HERY-HERMAWAN-AUTO-FOREVER-100X","schedule":"*/15 * * * *"}
-  ]
+  "functions": {
+    "api/*.py": {
+      "runtime": "python3.9"
+    }
+  }
 }
